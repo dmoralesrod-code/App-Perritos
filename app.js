@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-
     // 1. CARGAR DATOS DESDE EL JSON (fetch)
     fetch("data.json")
         .then(response => {
@@ -7,17 +6,23 @@ document.addEventListener("DOMContentLoaded", () => {
             return response.json();
         })
         .then(data => {
-            // Reemplazar texto "Cargando..." buscando directamente por el contenido de texto
-            const todosLosElementos = Array.from(document.querySelectorAll("*"));
-            const elementoCargando = todosLosElementos.find(el => 
-                el.children.length === 0 && el.textContent.includes("Cargando líneas")
-            );
-
-            if (elementoCargando && data.lineasAtencion) {
-                const contenedor = elementoCargando.parentElement;
-                contenedor.innerHTML = data.lineasAtencion
-                    .map(l => `<p><strong>${l.nombre}:</strong> ${l.numero}</p>`)
-                    .join("");
+            // Cargar líneas de atención de forma segura
+            if (data.lineasAtencion) {
+                const elementos = Array.from(document.querySelectorAll("*"));
+                const elementoCargando = elementos.find(el => el.children.length === 0 && el.textContent.includes("Cargando líneas"));
+                
+                if (elementoCargando) {
+                    const textoLineas = data.lineasAtencion
+                        .map(l => {
+                            // Detecta el nombre de la propiedad sin importar cómo se llame en el JSON
+                            const titulo = l.nombre || l.titulo || l.tipo || l.name || "Línea";
+                            const numero = l.numero || l.telefono || l.number || l;
+                            return `<strong>${titulo}:</strong> ${numero}`;
+                        })
+                        .join("<br>");
+                    
+                    elementoCargando.parentElement.innerHTML = textoLineas;
+                }
             }
 
             // Cargar categorías en el select
@@ -26,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 selectCategoria.innerHTML = '<option value="">Selecciona una categoría...</option>';
                 data.categorias.forEach(cat => {
                     const option = document.createElement("option");
-                    const valor = typeof cat === "object" ? (cat.nombre || cat.id) : cat;
+                    const valor = typeof cat === "object" ? (cat.nombre || cat.titulo || cat.name || cat.id) : cat;
                     option.value = valor;
                     option.textContent = valor;
                     selectCategoria.appendChild(option);
@@ -36,7 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(error => console.error("Error en fetch:", error));
 
     // 2. CAPTURAR UBICACIÓN GPS
-    const btnUbicacion = Array.from(document.querySelectorAll("button")).find(b => b.textContent.includes("GPS")) || document.querySelector("button");
+    const botones = Array.from(document.querySelectorAll("button"));
+    const btnUbicacion = botones.find(b => b.textContent.includes("GPS")) || botones[0];
     const inputUbicacion = document.querySelector('input[placeholder*="Dirección"]') || document.querySelector("input");
 
     if (btnUbicacion && inputUbicacion) {
