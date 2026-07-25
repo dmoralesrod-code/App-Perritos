@@ -6,22 +6,28 @@ document.addEventListener("DOMContentLoaded", () => {
             return response.json();
         })
         .then(data => {
-            // Cargar líneas de atención de forma segura
+            // Cargar líneas de atención
             if (data.lineasAtencion) {
                 const elementos = Array.from(document.querySelectorAll("*"));
                 const elementoCargando = elementos.find(el => el.children.length === 0 && el.textContent.includes("Cargando líneas"));
                 
                 if (elementoCargando) {
-                    const textoLineas = data.lineasAtencion
-                        .map(l => {
-                            // Detecta el nombre de la propiedad sin importar cómo se llame en el JSON
-                            const titulo = l.nombre || l.titulo || l.tipo || l.name || "Línea";
-                            const numero = l.numero || l.telefono || l.number || l;
-                            return `<strong>${titulo}:</strong> ${numero}`;
-                        })
-                        .join("<br>");
-                    
-                    elementoCargando.parentElement.innerHTML = textoLineas;
+                    const nombresPorDefecto = ["Emergencias", "Protección Animal"];
+                    const lineasHTML = data.lineasAtencion.map((l, index) => {
+                        let titulo = nombresPorDefecto[index] || `Línea ${index + 1}`;
+                        let numero = "";
+
+                        if (typeof l === "object" && l !== null) {
+                            titulo = l.nombre || l.titulo || l.tipo || nombresPorDefecto[index] || "Línea";
+                            numero = l.numero || l.telefono || Object.values(l)[1] || Object.values(l)[0];
+                        } else {
+                            numero = l;
+                        }
+
+                        return `<p style="margin: 4px 0;"><strong>${titulo}:</strong> ${numero}</p>`;
+                    }).join("");
+
+                    elementoCargando.parentElement.innerHTML = lineasHTML;
                 }
             }
 
@@ -31,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 selectCategoria.innerHTML = '<option value="">Selecciona una categoría...</option>';
                 data.categorias.forEach(cat => {
                     const option = document.createElement("option");
-                    const valor = typeof cat === "object" ? (cat.nombre || cat.titulo || cat.name || cat.id) : cat;
+                    const valor = typeof cat === "object" ? (cat.nombre || cat.titulo || Object.values(cat)[0]) : cat;
                     option.value = valor;
                     option.textContent = valor;
                     selectCategoria.appendChild(option);
