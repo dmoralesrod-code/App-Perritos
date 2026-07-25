@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+
     // 1. CARGAR DATOS DESDE EL JSON (fetch)
     fetch("data.json")
         .then(response => {
@@ -6,19 +7,17 @@ document.addEventListener("DOMContentLoaded", () => {
             return response.json();
         })
         .then(data => {
-            // Cargar líneas de atención
-            const contenedorLineas = document.querySelector("#lineas-atencion") || document.querySelector(".canales-directos") || document.querySelector("div:has(> p)");
-            
-            // Si tienes un contenedor específico para líneas
-            const lineasHTML = data.lineasAtencion
-                .map(l => `<p><strong>${l.nombre}:</strong> ${l.numero}</p>`)
-                .join("");
-            
-            // Renderizar en el bloque de canales de ayuda
-            const bloqueAyuda = document.querySelector(".Canales") || document.querySelector("section") || document.body;
-            const elementoCargando = Array.from(document.querySelectorAll("*")).find(el => el.textContent.includes("Cargando líneas"));
-            if (elementoCargando) {
-                elementoCargando.parentElement.innerHTML = lineasHTML;
+            // Reemplazar texto "Cargando..." buscando directamente por el contenido de texto
+            const todosLosElementos = Array.from(document.querySelectorAll("*"));
+            const elementoCargando = todosLosElementos.find(el => 
+                el.children.length === 0 && el.textContent.includes("Cargando líneas")
+            );
+
+            if (elementoCargando && data.lineasAtencion) {
+                const contenedor = elementoCargando.parentElement;
+                contenedor.innerHTML = data.lineasAtencion
+                    .map(l => `<p><strong>${l.nombre}:</strong> ${l.numero}</p>`)
+                    .join("");
             }
 
             // Cargar categorías en el select
@@ -27,8 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 selectCategoria.innerHTML = '<option value="">Selecciona una categoría...</option>';
                 data.categorias.forEach(cat => {
                     const option = document.createElement("option");
-                    option.value = cat.id || cat;
-                    option.textContent = cat.nombre || cat;
+                    const valor = typeof cat === "object" ? (cat.nombre || cat.id) : cat;
+                    option.value = valor;
+                    option.textContent = valor;
                     selectCategoria.appendChild(option);
                 });
             }
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 2. CAPTURAR UBICACIÓN GPS
     const btnUbicacion = Array.from(document.querySelectorAll("button")).find(b => b.textContent.includes("GPS")) || document.querySelector("button");
-    const inputUbicacion = document.querySelector('input[placeholder*="Dirección"]') || document.querySelectorAll("input")[0];
+    const inputUbicacion = document.querySelector('input[placeholder*="Dirección"]') || document.querySelector("input");
 
     if (btnUbicacion && inputUbicacion) {
         btnUbicacion.addEventListener("click", (e) => {
