@@ -1,8 +1,17 @@
+console.log("--> app.js se está ejecutando correctamente");
+
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("--> DOM cargado, intentando leer data.json...");
+
   fetch("data.json")
-    .then((response) => response.json())
+    .then((response) => {
+      console.log("--> Respuesta recibida de data.json:", response.status);
+      return response.json();
+    })
     .then((data) => {
-      // 1. Cargar Categorías en el select
+      console.log("--> Datos recibidos del JSON:", data);
+
+      // 1. Cargar Categorías
       const selectCategoria = document.querySelector("select");
       if (selectCategoria && data.categorias) {
         selectCategoria.innerHTML = '<option value="">Selecciona una categoría...</option>';
@@ -22,5 +31,5 @@ document.addEventListener("DOMContentLoaded", () => {
           .join("<br>");
       }
     })
-    .catch((error) => console.error("Error al cargar data.json:", error));
+    .catch((error) => console.error("--> Error en el proceso:", error));
 });
