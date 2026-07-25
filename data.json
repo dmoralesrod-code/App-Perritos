@@ -1,11 +1,18 @@
 {
-  "categorias": [
-    { "id": "abandono", "nombre": "Abandono" },
-    { "id": "violencia", "nombre": "Maltrato Físico" },
-    { "id": "negligencia", "nombre": "Negligencia / Falta de alimento" }
-  ],
   "lineasAtencion": [
-    { "entidad": "Línea de Emergencias", "numero": "123" },
-    { "entidad": "Protección Animal", "numero": "01 8000 123 456" }
+    {
+      "nombre": "Línea Emergencias",
+      "numero": "123"
+    },
+    {
+      "nombre": "Protección Animal",
+      "numero": "01 8000 123 456"
+    }
+  ],
+  "categorias": [
+    "Maltrato físico",
+    "Abono / Abandono",
+    "Negligencia",
+    "Venta ilegal"
   ]
 }
