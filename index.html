@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>App Perritos - Reporte de Maltrato</title>
   
-  <!-- Enlace al manifest PWA -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#d9534f">
 
@@ -37,7 +36,6 @@
     button:active { opacity: 0.85; }
 
     .status-msg { font-size: 0.8rem; color: #d9534f; font-weight: 500; }
-    .canal-item { margin-bottom: 8px; font-size: 0.9rem; line-height: 1.4; }
 
     @media (min-width: 768px) {
       body { max-width: 500px; margin: 0 auto; }
@@ -85,7 +83,14 @@
     </form>
   </section>
 
+  <!-- Sección inferior para mostrar reportes registrados -->
+  <section class="card">
+    <h2>Reportes Registrados</h2>
+    <div id="lista-reportes">
+      <p style="font-size: 0.85rem; color: #777;">No hay reportes registrados aún.</p>
+    </div>
+  </section>
+
   <script src="app.js"></script>
 </body>
 </html>
-
